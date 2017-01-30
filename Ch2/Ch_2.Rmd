@@ -2,7 +2,10 @@
 title: "Ch2. Standard Statistical Inference"
 author: "Jenny_Lee"
 date: "January 29, 2017"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -13,16 +16,12 @@ Loading libraries to be used in our analysis.
 ```{r libraries}
 library(MASS)
 library(ggplot2)
-
+library(stringr)
 ```
 
 
 
 ## Dataset for exercises
-
-
-
-
 
 
 ```{r dataset}
@@ -40,7 +39,7 @@ x2 <- rgamma(n = 267, 1.2, .25)
 
 ```{r dBenford}
 
-dBenford = function(n) {
+dBenford <- function(n) {
   # n: any number or a list of numbers 
   if (length(n) == 1){
     # If a number is provided,
@@ -51,7 +50,7 @@ dBenford = function(n) {
       0
   }} else{
     # if more than one numer is provided, outputs the corresponding list 
-    tmp_list = lapply(n, dBenford)
+    tmp_list <- lapply(n, dBenford)
     unlist(tmp_list)
   }
 }
@@ -68,15 +67,15 @@ sum(dBenford(1:9))
 
 ```{r cBenford}
 
-pBenford = function(n){
+pBenford <- function(n){
   # n: a numer or a list of numbers 
   if (length(n) == 1){
-    input_space = 1:9
-    selection = input_space[input_space <= n]
+    input_space <- 1:9
+    selection <- input_space[input_space <= n]
     sum(dBenford(selection))
   } else {
     # If more than one number is provided,
-    tmp_list = lapply(n, pBenford)
+    tmp_list <- lapply(n, pBenford)
     unlist(tmp_list)
   }
 }
@@ -90,15 +89,15 @@ pBenford(1:9)
 
 ```{r random}
 
-rBenford = function(n = 100){
+rBenford <- function(n = 100){
   # n: integer that is greater than 1 
-  cdf = pBenford(1:9)
+  cdf <- pBenford(1:9)
   if (n == 1){
-    r = runif(1)
+    r <- runif(1)
     length(cdf[cdf < r] + 1) 
   } else {
-    tmp_list = lapply(1:n, function(x){
-      r = runif(1)
+    tmp_list <- lapply(1:n, function(x){
+      r <- runif(1)
       length(cdf[cdf < r]) + 1 })
     unlist(tmp_list)
 
@@ -112,10 +111,10 @@ Let's check if our *rBenford* function generate random numbers according to the 
 
 ```{r sim}
 
-sim_res = lapply(1:100, function(x){rBenford(n = 100)})
-sim_res = data.frame(res = unlist(sim_res))
-dBenfords = dBenford(1:9)
-small_data = data.frame(n = 1:9, density = dBenfords)
+sim_res <- lapply(1:100, function(x){rBenford(n = 100)})
+sim_res <- data.frame(res = unlist(sim_res))
+dBenfords <- dBenford(1:9)
+small_data <- data.frame(n = 1:9, density = dBenfords)
 ggplot(data = sim_res, aes(x = res, y = ..density..)) + 
   geom_histogram(bins = 9, colour = "grey60", fill = "white") + 
   geom_line(data = small_data, aes(x = n, y = density)) + 
@@ -127,6 +126,31 @@ ggplot(data = sim_res, aes(x = res, y = ..density..)) +
 
 ```
 
+
+
+
+## 2.2  
+
+#### Given a vector of integers, x, write a function that counts frequency of first digits of elements of x. Write a function, based on Pearson's statistics, that tests if Benfords distribution is relevant. Try this function on X1. 
+
+```{r first_digit_freq}
+
+first_digit <- function(n){
+  # First convert the provided list of numbers to string
+  n <- strsplit(toString(n), split = ", ")
+  first_digits_list <- lapply(1:length(n[[1]]), function(x){
+    # Take each number then retrieve the first digit only
+    strsplit(n[[1]][x], split = "")[[1]][1]
+  })
+  # Counting frequency
+  table_tmp <- table(as.numeric(unlist(first_digits_list)))
+  df = data.frame(table_tmp)
+  colnames(df) <- c("first_digit", "freq")
+  df
+}
+
+first_digit(1:1000) 
+```
 
 
 
