@@ -145,12 +145,16 @@ x2 &lt;- rgamma(n = 267, 1.2, .25)
     if (n %in% 1:9) {
     # If  n is element of the sample space
       log(1 + 1 / n) / log(10)
-    } else{
+    } else {
       0
   }} else{
     # if more than one numer is provided, outputs the corresponding list 
     tmp_list = lapply(n, function(x){
-      log(1 + 1 / x) / log(10)
+      if (x %in% 1:9) {
+        log(1 + 1 / x) / log(10)
+      } else {
+        0
+      }
     })
     unlist(tmp_list)
   }
@@ -159,7 +163,8 @@ x2 &lt;- rgamma(n = 267, 1.2, .25)
 dBenford(1:9)</code></pre>
 <pre><code>## [1] 0.30103000 0.17609126 0.12493874 0.09691001 0.07918125 0.06694679
 ## [7] 0.05799195 0.05115252 0.04575749</code></pre>
-<pre class="r"><code>sum(dBenford(1:9))</code></pre>
+<pre class="r"><code># The sum of density on the sample space is equal to 1.
+sum(dBenford(1:9))</code></pre>
 <pre><code>## [1] 1</code></pre>
 </div>
 <div id="cumulative-distribution-function" class="section level3">

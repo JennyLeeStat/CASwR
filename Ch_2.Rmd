@@ -47,18 +47,24 @@ dBenford = function(n) {
     if (n %in% 1:9) {
     # If  n is element of the sample space
       log(1 + 1 / n) / log(10)
-    } else{
+    } else {
       0
   }} else{
     # if more than one numer is provided, outputs the corresponding list 
     tmp_list = lapply(n, function(x){
-      log(1 + 1 / x) / log(10)
+      if (x %in% 1:9) {
+        log(1 + 1 / x) / log(10)
+      } else {
+        0
+      }
     })
     unlist(tmp_list)
   }
 }
 
 dBenford(1:9)
+
+# The sum of density on the sample space is equal to 1.
 sum(dBenford(1:9))
 ```
 
