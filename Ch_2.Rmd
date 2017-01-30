@@ -1,0 +1,88 @@
+---
+title: "Ch2. Standard Statistical Inference"
+author: "Jenny_Lee"
+date: "January 29, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Loading libraries to be used in our analysis.
+```{r libraries}
+library(MASS)
+library(ggplot2)
+
+```
+
+
+
+## Dataset for exercises
+
+
+
+
+
+
+```{r dataset}
+
+set.seed(123)
+x1 <- trunc(rlnorm(n = 753, 5)) # log normal distribution with logmean = 5
+x2 <- rgamma(n = 267, 1.2, .25)
+# fit <- fitdistr(x2, "lognormal")
+
+```
+
+## 2.1 Probability functions for Benford's law
+
+### 1) Probability density function 
+
+```{r dBenford}
+
+dBenford = function(n) {
+  # n: any number or a list of numbers 
+  if (length(n) == 1){
+    # If a number is provided,
+    if (n %in% 1:9) {
+    # If  n is element of the sample space
+      log(1 + 1 / n) / log(10)
+    } else{
+      0
+  }} else{
+    # if more than one numer is provided, outputs the corresponding list 
+    tmp_list = lapply(n, function(x){
+      log(1 + 1 / x) / log(10)
+    })
+    unlist(tmp_list)
+  }
+}
+
+dBenford(1:9)
+sum(dBenford(1:9))
+```
+
+
+### 2) Cumulative distribution function 
+
+```{r cBenford}
+
+pBenford = function(n){
+  # n: a numer or a list of numbers 
+  if (length(n) == 1){
+    input_space = 1:9
+    selection = input_space[input_space <= n]
+    sum(dBenford(selection))
+  } else {
+    # If more than one number is provided,
+    tmp_list = lapply(n, pBenford)
+    unlist(tmp_list)
+  }
+}
+
+pBenford(1:9)
+
+
+```
+
+### 3) Random number generator 
