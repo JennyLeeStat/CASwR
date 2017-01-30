@@ -51,17 +51,12 @@ dBenford = function(n) {
       0
   }} else{
     # if more than one numer is provided, outputs the corresponding list 
-    tmp_list = lapply(n, function(x){
-      if (x %in% 1:9) {
-        log(1 + 1 / x) / log(10)
-      } else {
-        0
-      }
-    })
+    tmp_list = lapply(n, dBenford)
     unlist(tmp_list)
   }
 }
 
+# Densities of {1, 2, ..., 8, 9}
 dBenford(1:9)
 
 # The sum of density on the sample space is equal to 1.
@@ -92,3 +87,48 @@ pBenford(1:9)
 ```
 
 ### 3) Random number generator 
+
+```{r random}
+
+rBenford = function(n = 100){
+  # n: integer that is greater than 1 
+  cdf = pBenford(1:9)
+  if (n == 1){
+    r = runif(1)
+    length(cdf[cdf < r] + 1) 
+  } else {
+    tmp_list = lapply(1:n, function(x){
+      r = runif(1)
+      length(cdf[cdf < r]) + 1 })
+    unlist(tmp_list)
+
+  }
+}
+
+```
+
+
+Let's check if our *rBenford* function generate random numbers according to the Benford's law. 
+
+```{r sim}
+
+sim_res = lapply(1:100, function(x){rBenford(n = 100)})
+sim_res = data.frame(res = unlist(sim_res))
+dBenfords = dBenford(1:9)
+small_data = data.frame(n = 1:9, density = dBenfords)
+ggplot(data = sim_res, aes(x = res, y = ..density..)) + 
+  geom_histogram(bins = 9, colour = "grey60", fill = "white") + 
+  geom_line(data = small_data, aes(x = n, y = density)) + 
+  geom_point(data = small_data, aes(x = n, y = density), 
+             shape = 22,  size = 4, colour = "darkred", fill = "pink") + 
+  scale_x_discrete(limits = 1:9) + 
+  labs(title = "Histogram of simulation (n = 10,000) Vs. Real density of Benford's Law") + 
+  xlab("sample space")
+
+```
+
+
+
+
+
+
