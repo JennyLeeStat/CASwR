@@ -131,7 +131,7 @@ ggplot(data = sim_res, aes(x = res, y = ..density..)) +
 
 ## 2.2  
 
-#### Given a vector of integers, x, write a function that counts frequency of first digits of elements of x. Write a function, based on Pearson's statistics, that tests if Benfords distribution is relevant. Try this function on X1. 
+### Frequency of first digits of elements of x 
 
 ```{r first_digit_freq}
 
@@ -152,7 +152,15 @@ first_digit <- function(n){
 first_digit(1:1000) 
 ```
 
+### Goodness of fit statistics and tests 
 
 
+
+```{r}
+x1_first_digits <- first_digit(x1)
+ggplot(aes(x = first_digit, y = freq), data = x1_first_digits) +
+  geom_bar(stat = "identity", color = "grey60", fill = "white")
+
+```
 
 
